@@ -1,4 +1,4 @@
-
+#include <Servo.h>
 
 struct BtInput
 {
@@ -32,15 +32,15 @@ struct BluetoothConnector
 
 struct Dir
 {
-//TODO
+	//TODO
 
-  Dir() {}
+	Dir() {}
 };
 
-	Dir compute_directions(const BtInput bt_input, const CompassInput compa_input)
-	{
-		return Dir();
-	}
+Dir compute_directions(const BtInput bt_input, const CompassInput compa_input)
+{
+	return Dir();
+}
 
 struct CompassConnector
 {
@@ -52,11 +52,32 @@ struct CompassConnector
 
 BluetoothConnector bt;
 CompassConnector compass;
+DisplayManager display_manager;
 
-void send_to_display1(const Dir dir)
+struct DisplayManager
 {
+	Servo myservo;
+	int servo_pos = 0;
+	DisplayManager()
+	{
+		myservo.attach(9);  // attaches the servo on pin 9 to the servo object
+	}
 
-}
+	void send_to_display(const Dir dir)
+	{
+		for(pos = 0; pos < 180; pos += 1)
+		{
+			myservo.write(pos);
+			delay(15);
+		}
+
+		for(pos = 180; pos>=1; pos-=1)
+		{
+			myservo.write(pos);              // tell servo to go to position in variable 'pos'
+			delay(15);                       // waits 15ms for the servo to reach the position
+		} 
+	}
+};
 
 void setup() 
 {
@@ -71,6 +92,6 @@ void loop()
 
 	Dir computed_output = compute_directions(i, c_input);
 
-	send_to_display1(computed_output);
+	display_manager.send_to_display1(computed_output);
 }
 
